@@ -9,11 +9,12 @@ export async function onRequest(context) {
 
 
   const res = await fetch(url, {
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Accept": "application/json"
-    }
-  });
+  headers: {
+    "Authorization": `Bearer ${token}`,
+    "Accept": "application/json;charset=utf-8"
+  }
+});
+
 
   if (!res.ok) {
     const text = await res.text();
