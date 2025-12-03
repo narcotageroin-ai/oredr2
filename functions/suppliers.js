@@ -24,12 +24,8 @@ export async function onRequest(context) {
 
   const data = await res.json();
 
-// Фильтруем только поставщиков
-const suppliers = (data.rows || []).filter(row =>
-  row.supplier === true || row.isSupplier === true
-);
-
-const rows = suppliers.map(row => ({
+// БЕЗ фильтра — отдаем всех контрагентов
+const rows = (data.rows || []).map(row => ({
   id: row.id,
   name: row.name || ""
 }));
@@ -38,6 +34,7 @@ return new Response(JSON.stringify(rows), {
   status: 200,
   headers: { "Content-Type": "application/json; charset=utf-8" }
 });
+
 
 
   return new Response(JSON.stringify(rows), {
