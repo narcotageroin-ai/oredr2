@@ -40,7 +40,10 @@ export async function onRequest(context) {
 
 
   // 1. Получаем товары по поставщику
-  const productsUrl = `https://api.moysklad.ru/api/remap/1.2/entity/product?filter=supplier.id==${supplierId}`;
+  // href поставщика для фильтра
+const supplierHref = `https://api.moysklad.ru/api/remap/1.2/entity/counterparty/${supplierId}`;
+const productsUrl = `https://api.moysklad.ru/api/remap/1.2/entity/product?filter=supplier=${encodeURIComponent(supplierHref)}`;
+
   const productsRes = await fetch(productsUrl, { headers });
   if (!productsRes.ok) {
     const text = await productsRes.text();
