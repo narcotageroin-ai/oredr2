@@ -33,10 +33,11 @@ export async function onRequest(context) {
   }
 
   const headers = {
-    "Authorization": `Bearer ${token}`,
-    "Accept": "application/json",
-    "Content-Type": "application/json"
-  };
+  "Authorization": `Bearer ${token}`,
+  "Accept": "application/json;charset=utf-8",
+  "Content-Type": "application/json;charset=utf-8"
+};
+
 
   // 1. Получаем товары по поставщику
   const productsUrl = `https://api.moysklad.ru/api/remap/1.2/entity/product?filter=supplier.id==${supplierId}`;
