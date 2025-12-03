@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Формирование заказа поставщику</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 16px; }
+    h1 { font-size: 24px; margin-bottom: 16px; }
+    label { display: block; margin: 8px 0 4px; font-weight: 500; }
+    select, input, button { padding: 6px 8px; font-size: 14px; margin-bottom: 10px; }
+    button { cursor: pointer; }
+    .row { margin-bottom: 12px; }
+    #status { margin-top: 16px; white-space: pre-line; }
+  </style>
+</head>
+<body>
+  <h1>Формирование заказа поставщику</h1>
+
+  <div class="row">
+    <label for="supplierId">Поставщик:</label>
+    <select id="supplierId"></select>
+  </div>
+
+  <div class="row">
+    <label for="analysisDays">Период анализа (дней):</label>
+    <select id="analysisDays">
+      <option value="7">7</option>
+      <option value="10">10</option>
+      <option value="30" selected>30</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label for="forecastDays">Период заказа (дней):</label>
+    <select id="forecastDays">
+      <option value="7">7</option>
+      <option value="14" selected>14</option>
+      <option value="21">21</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label for="packageSize">Упаковка по умолчанию:</label>
+    <input id="packageSize" value="10" />
+  </div>
+
+  <div class="row">
+    <label for="reservePercent">Резерв, если товара нет (%):</label>
+    <input id="reservePercent" value="30" />
+  </div>
+
+  <div class="row">
+    <button id="createOrderBtn">Сформировать заказ</button>
+  </div>
+
+  <div id="status"></div>
+
+  <script>
+    async function loadSuppliers() {
+      const select = document.getElementById('supplierId');
+      const status = document.getElementById('status');
+      status.textContent = 'Загружаю поставщиков...';
+      try {
+        const res = await fetch('/suppliers');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const suppliers = await res.json();
+        select.innerHTML = '';
+        suppliers.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.textContent = s.name;
+          select.appendChild(opt);
+        });
+        if (suppliers.length === 0) {
+          status.textContent = 'Поставщики не найдены. Проверь права и токен в МойСклад.';
+        } else {
+          status.textContent = 'Поставщики загружены.';
+        }
+      } catch (e) {
+        console.error(e);
+        status.textContent = 'Ошибка загрузки поставщиков: ' + e.message;
+      }
+    }
+
+    async function createOrder() {
+      const status = document.getElementById('status');
+      const supplierId = document.getElementById('supplierId').value;
+      const analysisDays = document.getElementById('analysisDays').value;
+      const forecastDays = document.getElementById('forecastDays').value;
+      const packageSize = document.getElementById('packageSize').value;
+      const reservePercent = document.getElementById('reservePercent').value;
+
+      status.textContent = 'Формирую заказ, подождите...';
+
+      try {
+        const res = await fetch('/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            supplierId,
+            analysisDays: Number(analysisDays),
+            forecastDays: Number(forecastDays),
+            packageSize: Number(packageSize),
+            reservePercent: Number(reservePercent)
+          })
+        });
+
+        const text = await res.text();
+        if (!res.ok) {
+          status.textContent = 'Ошибка: ' + text;
+        } else {
+          status.textContent = text;
+        }
+      } catch (e) {
+        console.error(e);
+        status.textContent = 'Ошибка при запросе: ' + e.message;
+      }
+    }
+
+    document.getElementById('createOrderBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      createOrder();
+    });
+
+    loadSuppliers();
+  </script>
+</body>
+</html>
