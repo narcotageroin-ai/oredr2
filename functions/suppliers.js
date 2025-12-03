@@ -5,7 +5,8 @@ export async function onRequest(context) {
     return new Response("MSK_TOKEN is not set", { status: 500 });
   }
 
-  const url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=isSupplier=true";
+  const url = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=isSupplier=true";
+
 
   const res = await fetch(url, {
     headers: {
