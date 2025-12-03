@@ -24,8 +24,12 @@ export async function onRequest(context) {
 
   const data = await res.json();
 
-// БЕЗ фильтра — отдаем всех контрагентов
-const rows = (data.rows || []).map(row => ({
+// Фильтруем только тех контрагентов, у которых есть тег "партнеры"
+const partners = (data.rows || []).filter(row =>
+  Array.isArray(row.tags) && row.tags.includes("партнеры")
+);
+
+const rows = partners.map(row => ({
   id: row.id,
   name: row.name || ""
 }));
