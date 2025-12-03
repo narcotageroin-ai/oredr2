@@ -39,7 +39,7 @@ export async function onRequest(context) {
   };
 
   // 1. Получаем товары по поставщику
-  const productsUrl = `https://online.moysklad.ru/api/remap/1.2/entity/product?filter=supplier.id==${supplierId}`;
+  const productsUrl = `https://api.moysklad.ru/api/remap/1.2/entity/product?filter=supplier.id==${supplierId}`;
   const productsRes = await fetch(productsUrl, { headers });
   if (!productsRes.ok) {
     const text = await productsRes.text();
@@ -61,7 +61,7 @@ export async function onRequest(context) {
 
     // 2. Продажи по товару
     const salesFilter = `moment>${dateFrom};moment<${dateTo};product.id=${productId}`;
-    const salesUrl = `https://online.moysklad.ru/api/remap/1.2/report/sales/byorder?filter=${encodeURIComponent(salesFilter)}`;
+    const salesUrl = `https://api.moysklad.ru/api/remap/1.2/report/sales/byorder?filter=${encodeURIComponent(salesFilter)}`;
     const salesRes = await fetch(salesUrl, { headers });
     if (!salesRes.ok) {
       const text = await salesRes.text();
@@ -111,7 +111,7 @@ export async function onRequest(context) {
   }
 
   const supplierMeta = {
-    href: `https://online.moysklad.ru/api/remap/1.2/entity/counterparty/${supplierId}`,
+    href: `https://api.moysklad.ru/api/remap/1.2/entity/counterparty/${supplierId}`,
     type: "counterparty",
     mediaType: "application/json"
   };
@@ -128,7 +128,7 @@ export async function onRequest(context) {
     positions: orderPositions
   };
 
-  const orderUrl = "https://online.moysklad.ru/api/remap/1.2/entity/supplierorder";
+  const orderUrl = "https://api.moysklad.ru/api/remap/1.2/entity/supplierorder";
   const orderRes = await fetch(orderUrl, {
     method: "POST",
     headers,
