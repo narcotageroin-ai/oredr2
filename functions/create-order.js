@@ -65,7 +65,7 @@ const productsUrl = `https://api.moysklad.ru/api/remap/1.2/entity/product?filter
 
     // 2. Продажи по товару
     const salesFilter = `moment>${dateFrom};moment<${dateTo};product.id=${productId}`;
-    const salesUrl = `https://api.moysklad.ru/api/remap/1.2/report/sales/byorder?filter=${encodeURIComponent(salesFilter)}`;
+    const salesUrl = `https://api.moysklad.ru/api/remap/1.2/report/sales?filter=${encodeURIComponent(salesFilter)}`;
     const salesRes = await fetch(salesUrl, { headers });
     if (!salesRes.ok) {
       const text = await salesRes.text();
